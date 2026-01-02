@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"io"
 	"log"
 	"net"
@@ -29,6 +30,34 @@ func echo(conn net.Conn) {
 	}
 }
 
+func betterEcho(conn net.Conn) {
+	// this function just uses bufio which helps in buffer based input output
+	defer conn.Close()
+
+	reader := bufio.NewReader(conn)
+	s, err := reader.ReadString('\n')
+	if err != nil {
+		log.Fatalln("Unable to read data")
+	}
+	log.Printf("Read %d bytes :%s", len(s), s)
+
+	log.Println("Writing data")
+
+	writer := bufio.NewWriter(conn)
+	if _, err := writer.WriteString(s); err != nil {
+		log.Fatalln("Unable to write data")
+	}
+	writer.Flush()
+}
+
+func echoThree(conn net.Conn) {
+	// and this one uses a copy function which writes back to client
+	defer conn.Close()
+
+	if _, err := io.Copy(conn, conn); err != nil {
+		log.Fatalln("Unable to read/write data")
+	}
+}
 func main() {
 	listener, err := net.Listen("tcp", "127.0.0.1:9000")
 	if err != nil {
@@ -43,6 +72,6 @@ func main() {
 			log.Fatalln("Unable to accept connection")
 		}
 
-		go echo(conn)
+		go betterEcho(conn)
 	}
 }
