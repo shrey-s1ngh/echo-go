@@ -1,4 +1,4 @@
 ### Connection based Echo command
-- This mini project just echo's stream from a client to server
-- It just repeats whatever you say but just at the server side 
-- Utilized net package of Go to do that...
+- This mini project just echo's stream of bytes using a tcp connecton between client and server
+- It just repeats whatever you say 
+- Utilized net package of Go and concept of concurrency (irrelevant here but yeah..)
